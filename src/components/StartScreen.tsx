@@ -1,8 +1,12 @@
+import { gameModes, type GameMode } from "../data/gameModes";
+
 type StartScreenProps = {
+  selectedMode: GameMode;
+  onModeChange: (mode: GameMode) => void;
   onStart: () => void;
 };
 
-export function StartScreen({ onStart }: StartScreenProps) {
+export function StartScreen({ selectedMode, onModeChange, onStart }: StartScreenProps) {
   return (
     <section className="screen-panel start-screen">
       <div className="screen-copy">
@@ -19,6 +23,28 @@ export function StartScreen({ onStart }: StartScreenProps) {
         <li>Avance por 3 fases sem parar a partida.</li>
         <li>Chegue ao portal final antes que o tempo acabe.</li>
       </ul>
+
+      <section className="mode-picker" aria-label="Modos de dificuldade">
+        <div>
+          <p className="mode-picker-title">Dificuldade</p>
+          <p className="mode-picker-copy">{selectedMode.description}</p>
+        </div>
+        <div className="mode-options" role="radiogroup" aria-label="Escolha a dificuldade">
+          {gameModes.map((mode) => (
+            <button
+              key={mode.id}
+              className={mode.id === selectedMode.id ? "mode-option is-active" : "mode-option"}
+              type="button"
+              role="radio"
+              aria-checked={mode.id === selectedMode.id}
+              onClick={() => onModeChange(mode)}
+            >
+              <strong>{mode.name}</strong>
+              <span>{mode.portalRequirement.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       <button className="primary-button" type="button" onClick={onStart}>
         Iniciar jogo

@@ -4,13 +4,14 @@ import { getRecords, saveRecord, type PlayerRecord } from "../utils/records";
 
 type EndScreenProps = {
   outcome: GameOutcome;
+  onMainMenu: () => void;
   onRestart: () => void;
 };
 
-export function EndScreen({ outcome, onRestart }: EndScreenProps) {
+export function EndScreen({ outcome, onMainMenu, onRestart }: EndScreenProps) {
   const isVictory = outcome.status === "victory";
   const [playerName, setPlayerName] = useState("");
-  const [records, setRecords] = useState<PlayerRecord[]>(() => getRecords());
+  const [records, setRecords] = useState<PlayerRecord[]>(() => getRecords(outcome.modeId));
   const [recordSaved, setRecordSaved] = useState(false);
 
   const handleSaveRecord = (event: FormEvent<HTMLFormElement>) => {
@@ -22,18 +23,18 @@ export function EndScreen({ outcome, onRestart }: EndScreenProps) {
   return (
     <section className={`screen-panel end-screen ${isVictory ? "is-victory" : "is-defeat"}`}>
       <div className="screen-copy">
-        <p className="eyebrow">{isVictory ? "Missão concluída" : "Nova tentativa"}</p>
-        <h1>{isVictory ? "Parabéns, você completou a Corrida dos Bits!" : "Fim de jogo!"}</h1>
+        <p className="eyebrow">{isVictory ? "Missao concluida" : "Nova tentativa"}</p>
+        <h1>{isVictory ? "Voce completou a Corrida dos Bits!" : "Fim de jogo!"}</h1>
         <p className="subtitle">
           {isVictory
-            ? "Você coletou bits, desviou dos bugs e chegou ao final da fase. Cada ação do jogo foi controlada por linhas de código."
-            : "Os bugs venceram desta vez, mas todo programador aprende testando, errando e tentando novamente."}
+            ? "Voce coletou bits, desviou dos bugs e chegou ao final. Nos modos adultos, os bonus fazem cada segundo e cada vida importarem."
+            : "Os bugs venceram desta vez. Ajuste a rota, observe os ciclos dos obstaculos e tente novamente."}
         </p>
       </div>
 
       <div className="final-stats" aria-label="Resultado final">
         <div>
-          <span>Pontuação final</span>
+          <span>Pontuacao final</span>
           <strong>{outcome.score}</strong>
         </div>
         <div>
@@ -41,10 +42,14 @@ export function EndScreen({ outcome, onRestart }: EndScreenProps) {
           <strong>{Math.max(0, Math.ceil(outcome.timeLeft))}s</strong>
         </div>
         <div>
-          <span>Fases concluídas</span>
+          <span>Fases concluidas</span>
           <strong>
             {outcome.phasesCompleted}/{outcome.totalPhases}
           </strong>
+        </div>
+        <div>
+          <span>Modo</span>
+          <strong>{outcome.modeName}</strong>
         </div>
       </div>
 
@@ -66,9 +71,9 @@ export function EndScreen({ outcome, onRestart }: EndScreenProps) {
       </form>
 
       <section className="records-board" aria-label="Recordes salvos">
-        <h2>Recordes locais</h2>
+        <h2>Recordes locais: {outcome.modeName}</h2>
         {records.length === 0 ? (
-          <p>Nenhum recorde salvo ainda.</p>
+          <p>Nenhum recorde salvo neste modo ainda.</p>
         ) : (
           <ol>
             {records.map((record) => (
@@ -76,8 +81,8 @@ export function EndScreen({ outcome, onRestart }: EndScreenProps) {
                 <span>{record.name}</span>
                 <strong>{record.score} pts</strong>
                 <small>
-                  {record.status === "victory" ? "Vitória" : "Tentativa"} · {record.phasesCompleted}/
-                  {record.totalPhases} fases · {record.timeLeft}s
+                  {record.status === "victory" ? "Vitoria" : "Tentativa"} - {record.phasesCompleted}/
+                  {record.totalPhases} fases - {record.timeLeft}s{record.dailySeed ? ` - ${record.dailySeed}` : ""}
                 </small>
               </li>
             ))}
@@ -85,9 +90,16 @@ export function EndScreen({ outcome, onRestart }: EndScreenProps) {
         )}
       </section>
 
-      <button className="primary-button" type="button" onClick={onRestart}>
-        {isVictory ? "Jogar novamente" : "Tentar novamente"}
-      </button>
+      <div className="end-actions">
+        <button className="primary-button" type="button" onClick={onRestart}>
+          {isVictory ? "Jogar novamente" : "Tentar novamente"}
+        </button>
+        {!isVictory && (
+          <button className="secondary-button" type="button" onClick={onMainMenu}>
+            Voltar ao menu principal
+          </button>
+        )}
+      </div>
     </section>
   );
 }

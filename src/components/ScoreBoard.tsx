@@ -4,11 +4,33 @@ type ScoreBoardProps = {
   timeLeft: number;
   phase: number;
   totalPhases: number;
+  modeName: string;
+  collectedBits: number;
+  requiredBits: number;
+  totalBits: number;
+  combo: number;
 };
 
-export function ScoreBoard({ score, lives, timeLeft, phase, totalPhases }: ScoreBoardProps) {
+export function ScoreBoard({
+  score,
+  lives,
+  timeLeft,
+  phase,
+  totalPhases,
+  modeName,
+  collectedBits,
+  requiredBits,
+  totalBits,
+  combo,
+}: ScoreBoardProps) {
+  const bitGoal = requiredBits > 0 ? `${collectedBits}/${requiredBits}` : `${collectedBits}/${totalBits}`;
+
   return (
-    <div className="score-board" aria-label="Informações da partida">
+    <div className="score-board" aria-label="Informacoes da partida">
+      <div className="score-item">
+        <span>Modo</span>
+        <strong>{modeName}</strong>
+      </div>
       <div className="score-item">
         <span>Fase</span>
         <strong>
@@ -22,6 +44,14 @@ export function ScoreBoard({ score, lives, timeLeft, phase, totalPhases }: Score
       <div className="score-item">
         <span>Vidas</span>
         <strong aria-label={`${lives} vidas restantes`}>{"♥".repeat(Math.max(lives, 0))}</strong>
+      </div>
+      <div className="score-item">
+        <span>Bits</span>
+        <strong>{bitGoal}</strong>
+      </div>
+      <div className="score-item">
+        <span>Combo</span>
+        <strong>{combo}x</strong>
       </div>
       <div className="score-item">
         <span>Tempo</span>
