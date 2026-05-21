@@ -229,7 +229,7 @@ export const levels: LevelConfig[] = [
   {
     id: 3,
     title: "Fase 3: Corrida final",
-    hint: "Bugs maiores, menos espaco e menos tempo para pensar.",
+    hint: "Bugs maiores, menos espaço e menos tempo para pensar.",
     worldWidth: 2100,
     portalX: 1985,
     timeBonus: 0,
@@ -468,7 +468,7 @@ export const levels: LevelConfig[] = [
   {
     id: 5,
     title: "Fase 5: Deploy final",
-    hint: "O portal final so abre para quem coleta todos os bits sem desperdiçar tempo.",
+    hint: "O portal final só abre para quem coleta todos os bits sem desperdiçar tempo.",
     worldWidth: 2500,
     portalX: 2380,
     timeBonus: 0,

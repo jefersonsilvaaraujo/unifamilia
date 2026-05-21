@@ -23,7 +23,7 @@ export const codeSnippets: CodeSnippet[] = [
     code: `function moverPersonagem(direcao) {
   personagem.x += direcao * velocidade;
 }`,
-    description: "Quando o jogador aperta uma tecla, o personagem muda de posicao na tela.",
+    description: "Quando o jogador aperta uma tecla, o personagem muda de posição na tela.",
   },
   {
     id: "jump",
@@ -33,7 +33,7 @@ export const codeSnippets: CodeSnippet[] = [
     personagem.velocidadeY = -forcaDoPulo;
   }
 }`,
-    description: "O personagem so pode pular quando esta encostado no chao.",
+    description: "O personagem só pode pular quando está encostado no chão.",
   },
   {
     id: "collect",
@@ -42,51 +42,51 @@ export const codeSnippets: CodeSnippet[] = [
   pontuacao += 10;
   bit.coletado = true;
 }`,
-    description: "Quando o personagem encosta em um bit, a pontuacao aumenta.",
+    description: "Quando o personagem encosta em um bit, a pontuação aumenta.",
   },
   {
     id: "shoot",
-    title: "Tiro estrategico",
+    title: "Tiro estratégico",
     code: `function atirar() {
   if (municao > 0) {
     criarTiro(personagem.direcao);
     municao -= 1;
   }
 }`,
-    description: "O jogador tem poucos tiros por partida e precisa escolher quais bugs valem ser destruidos.",
+    description: "O jogador tem poucos tiros por partida e precisa escolher quais bugs valem ser destruídos.",
   },
   {
     id: "collision",
-    title: "Colisao com obstaculo",
+    title: "Colisão com obstáculo",
     code: `function verificarColisao() {
   if (personagem.encostouNo(obstaculo)) {
     vidas -= 1;
   }
 }`,
-    description: "Quando o personagem bate em um obstaculo, ele perde uma vida.",
+    description: "Quando o personagem bate em um obstáculo, ele perde uma vida.",
   },
   {
     id: "win",
-    title: "Condicao de vitoria",
+    title: "Condição de vitória",
     code: `function verificarVitoria() {
   if (personagem.x >= linhaDeChegada) {
     jogoFinalizado = true;
   }
 }`,
-    description: "Quando o personagem chega ao final da fase, o jogo termina com vitoria.",
+    description: "Quando o personagem chega ao final da fase, o jogo termina com vitória.",
   },
   {
     id: "difficulty",
-    title: "Dificuldade dinamica",
+    title: "Dificuldade dinâmica",
     code: `function podeAbrirPortal(modo, bitsColetados) {
   const meta = Math.ceil(totalDeBits * modo.exigencia);
   return bitsColetados >= meta;
 }`,
-    description: "Nos modos adultos, o portal pode exigir uma quantidade minima de bits antes de abrir.",
+    description: "Nos modos adultos, o portal pode exigir uma quantidade mínima de bits antes de abrir.",
   },
   {
     id: "score",
-    title: "Pontuacao avancada",
+    title: "Pontuação avançada",
     code: `function pontuarColeta(combo, modo) {
   const bonusCombo = Math.min(combo, 8) * 2;
   return Math.round((10 + bonusCombo) * modo.multiplicador);
@@ -95,11 +95,11 @@ export const codeSnippets: CodeSnippet[] = [
   },
   {
     id: "hazards",
-    title: "Obstaculos temporizados",
+    title: "Obstáculos temporizados",
     code: `function laserAtivo(tempo, ciclo) {
   const etapa = (tempo + ciclo.offset) % ciclo.total;
   return etapa < ciclo.ativo;
 }`,
-    description: "Firewalls, zonas de lag, bits falsos e plataformas temporarias criam padroes para observar.",
+    description: "Firewalls, zonas de lag, bits falsos e plataformas temporárias criam padrões para observar.",
   },
 ];

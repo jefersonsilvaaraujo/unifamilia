@@ -127,7 +127,7 @@ function clonePlatforms(platforms: Platform[]) {
   }));
 }
 
-// Colisao retangular usada para bits, bugs, plataformas, obstaculos e chegada.
+// Colisão retangular usada para bits, bugs, plataformas, obstáculos e chegada.
 function isColliding(a: Rect, b: Rect) {
   return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
@@ -154,7 +154,7 @@ function getDailySeed() {
 }
 
 function getDailySeedLabel(seed: string) {
-  return `Diario ${seed}`;
+  return `Diário ${seed}`;
 }
 
 function seededUnit(seed: string, key: string) {
@@ -525,7 +525,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
         return;
       }
 
-      // requestAnimationFrame entrega o tempo entre quadros; isso mantem o movimento estavel.
+      // requestAnimationFrame entrega o tempo entre quadros; isso mantém o movimento estável.
       const lastFrame = lastFrameRef.current ?? timestamp;
       const delta = Math.min((timestamp - lastFrame) / 1000, 0.033);
       lastFrameRef.current = timestamp;
@@ -597,7 +597,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
           const [destroyedBug] = bugsRef.current.splice(hitBugIndex, 1);
           const destroyScore = scoreValue(BUG_DESTROY_BASE_SCORE + destroyedBug.level * 5, mode);
           scoreRef.current += destroyScore;
-          showMessage(`Bug nivel ${destroyedBug.level} destruido!`, 1);
+          showMessage(`Bug nível ${destroyedBug.level} destruído!`, 1);
           addFloatingMessage(destroyedBug.x, destroyedBug.y - 16, `+${destroyScore} bug`);
           playSound("bugDestroy");
           setTeachingAction("shoot");
@@ -680,7 +680,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
 
       const activePlatforms = platformsRef.current.filter((platform) => isPlatformActive(platform, elapsedRef.current));
 
-      // Aterrissagem: o robo so encaixa na plataforma quando vem de cima.
+      // Aterrissagem: o robô só encaixa na plataforma quando vem de cima.
       for (const platform of activePlatforms) {
         const isLanding =
           player.velocityY >= 0 &&
@@ -696,7 +696,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
         }
       }
 
-      // Coletar bits altera pontuacao, feedback visual, som e o trecho didatico no painel.
+      // Coletar bits altera pontuação, feedback visual, som e o trecho didático no painel.
       for (const bit of bitsRef.current) {
         if (!bit.collected && isColliding(player, bit)) {
           bit.collected = true;
@@ -743,8 +743,8 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
             scoreRef.current = Math.max(0, scoreRef.current - scoreValue(DAMAGE_SCORE_PENALTY, mode));
           }
 
-          const obstacleMessage = hitBug ? `Bug nivel ${hitBug.level}` : "Firewall ativo";
-          showMessage(`${obstacleMessage}! Voce voltou ao inicio.`);
+          const obstacleMessage = hitBug ? `Bug nível ${hitBug.level}` : "Firewall ativo";
+          showMessage(`${obstacleMessage}! Você voltou ao início.`);
           addFloatingMessage(player.x, player.y - 16, "-1 vida");
           playSound("collision");
           setTeachingAction(hitLaser ? "hazards" : "collision");
@@ -761,7 +761,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
       const collectedBits = getCollectedBits(bitsRef.current);
       const requiredBits = getRequiredBits(mode, bitsRef.current.length);
 
-      // Portais intermediarios carregam a proxima fase sem parar a partida.
+      // Portais intermediários carregam a próxima fase sem parar a partida.
       if (player.x + player.width >= level.portalX) {
         if (collectedBits < requiredBits) {
           player.x = level.portalX - player.width - 4;
@@ -769,7 +769,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
 
           if (portalDeniedCooldownRef.current === 0) {
             const remainingBits = requiredBits - collectedBits;
-            showMessage(`Portal bloqueado: faltam ${remainingBits} bits obrigatorios.`, 1.4);
+            showMessage(`Portal bloqueado: faltam ${remainingBits} bits obrigatórios.`, 1.4);
             portalDeniedCooldownRef.current = 1;
             setTeachingAction("difficulty");
           }
@@ -783,7 +783,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
             addFloatingMessage(player.x, player.y - 28, `+${victoryBonus} tempo`);
           }
 
-          showMessage("Portal final alcancado!");
+          showMessage("Portal final alcançado!");
           finishGame("victory");
           return;
         }
@@ -852,7 +852,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
   }, [activeLevels, finishGame, loadPhase, mode, resetPlayerToStart, setTeachingAction, showMessage]);
 
   return (
-    <section className="game-shell" aria-label="Area do jogo Corrida dos Bits">
+    <section className="game-shell" aria-label="Área do jogo Corrida dos Bits">
       <div className="game-top-row">
         <ScoreBoard
           score={snapshot.score}
@@ -971,7 +971,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
                 width: bug.width,
                 height: bug.height,
               }}
-              aria-label={`Bug nivel ${bug.level}`}
+              aria-label={`Bug nível ${bug.level}`}
             >
               {bug.label}
             </div>
@@ -1002,7 +1002,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
               width: snapshot.player.width,
               height: snapshot.player.height,
             }}
-            aria-label="Personagem robo"
+            aria-label="Personagem robô"
           >
             <span className="player-eye left-eye" />
             <span className="player-eye right-eye" />

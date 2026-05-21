@@ -28,7 +28,7 @@ export function ScoreBoard({
   const bitGoal = requiredBits > 0 ? `${collectedBits}/${requiredBits}` : `${collectedBits}/${totalBits}`;
 
   return (
-    <div className="score-board" aria-label="Informacoes da partida">
+    <div className="score-board" aria-label="Informações da partida">
       <div className="score-item">
         <span>Modo</span>
         <strong>{modeName}</strong>

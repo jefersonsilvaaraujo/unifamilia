@@ -23,18 +23,18 @@ export function EndScreen({ outcome, onMainMenu, onRestart }: EndScreenProps) {
   return (
     <section className={`screen-panel end-screen ${isVictory ? "is-victory" : "is-defeat"}`}>
       <div className="screen-copy">
-        <p className="eyebrow">{isVictory ? "Missao concluida" : "Nova tentativa"}</p>
-        <h1>{isVictory ? "Voce completou a Corrida dos Bits!" : "Fim de jogo!"}</h1>
+        <p className="eyebrow">{isVictory ? "Missão concluída" : "Nova tentativa"}</p>
+        <h1>{isVictory ? "Você completou a Corrida dos Bits!" : "Fim de jogo!"}</h1>
         <p className="subtitle">
           {isVictory
-            ? "Voce coletou bits, desviou dos bugs e chegou ao final. Nos modos adultos, os bonus fazem cada segundo e cada vida importarem."
-            : "Os bugs venceram desta vez. Ajuste a rota, observe os ciclos dos obstaculos e tente novamente."}
+            ? "Você coletou bits, desviou dos bugs e chegou ao final. Nos modos adultos, os bônus fazem cada segundo e cada vida importarem."
+            : "Os bugs venceram desta vez. Ajuste a rota, observe os ciclos dos obstáculos e tente novamente."}
         </p>
       </div>
 
       <div className="final-stats" aria-label="Resultado final">
         <div>
-          <span>Pontuacao final</span>
+          <span>Pontuação final</span>
           <strong>{outcome.score}</strong>
         </div>
         <div>
@@ -42,7 +42,7 @@ export function EndScreen({ outcome, onMainMenu, onRestart }: EndScreenProps) {
           <strong>{Math.max(0, Math.ceil(outcome.timeLeft))}s</strong>
         </div>
         <div>
-          <span>Fases concluidas</span>
+          <span>Fases concluídas</span>
           <strong>
             {outcome.phasesCompleted}/{outcome.totalPhases}
           </strong>
@@ -81,7 +81,7 @@ export function EndScreen({ outcome, onMainMenu, onRestart }: EndScreenProps) {
                 <span>{record.name}</span>
                 <strong>{record.score} pts</strong>
                 <small>
-                  {record.status === "victory" ? "Vitoria" : "Tentativa"} - {record.phasesCompleted}/
+                  {record.status === "victory" ? "Vitória" : "Tentativa"} - {record.phasesCompleted}/
                   {record.totalPhases} fases - {record.timeLeft}s{record.dailySeed ? ` - ${record.dailySeed}` : ""}
                 </small>
               </li>
