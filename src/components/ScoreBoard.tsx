@@ -9,6 +9,7 @@ type ScoreBoardProps = {
   requiredBits: number;
   totalBits: number;
   combo: number;
+  ammo: number;
 };
 
 export function ScoreBoard({
@@ -22,6 +23,7 @@ export function ScoreBoard({
   requiredBits,
   totalBits,
   combo,
+  ammo,
 }: ScoreBoardProps) {
   const bitGoal = requiredBits > 0 ? `${collectedBits}/${requiredBits}` : `${collectedBits}/${totalBits}`;
 
@@ -52,6 +54,10 @@ export function ScoreBoard({
       <div className="score-item">
         <span>Combo</span>
         <strong>{combo}x</strong>
+      </div>
+      <div className="score-item">
+        <span>Tiros</span>
+        <strong>{ammo}/10</strong>
       </div>
       <div className="score-item">
         <span>Tempo</span>

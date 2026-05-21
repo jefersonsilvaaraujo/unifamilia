@@ -1,4 +1,13 @@
-export type CodeSnippetId = "move" | "jump" | "collect" | "collision" | "win" | "difficulty" | "score" | "hazards";
+export type CodeSnippetId =
+  | "move"
+  | "jump"
+  | "shoot"
+  | "collect"
+  | "collision"
+  | "win"
+  | "difficulty"
+  | "score"
+  | "hazards";
 
 export type CodeSnippet = {
   id: CodeSnippetId;
@@ -34,6 +43,17 @@ export const codeSnippets: CodeSnippet[] = [
   bit.coletado = true;
 }`,
     description: "Quando o personagem encosta em um bit, a pontuacao aumenta.",
+  },
+  {
+    id: "shoot",
+    title: "Tiro estrategico",
+    code: `function atirar() {
+  if (municao > 0) {
+    criarTiro(personagem.direcao);
+    municao -= 1;
+  }
+}`,
+    description: "O jogador tem poucos tiros por partida e precisa escolher quais bugs valem ser destruidos.",
   },
   {
     id: "collision",

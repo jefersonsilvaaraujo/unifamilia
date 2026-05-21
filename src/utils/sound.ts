@@ -1,4 +1,14 @@
-type SoundName = "start" | "move" | "jump" | "collect" | "collision" | "phase" | "victory" | "defeat";
+type SoundName =
+  | "start"
+  | "move"
+  | "jump"
+  | "shoot"
+  | "bugDestroy"
+  | "collect"
+  | "collision"
+  | "phase"
+  | "victory"
+  | "defeat";
 
 let audioContext: AudioContext | null = null;
 let soundEnabled = true;
@@ -76,6 +86,14 @@ export function playSound(sound: SoundName) {
     case "jump":
       playTone(430, 0.08, 0, "triangle", 0.075);
       playTone(690, 0.1, 0.055, "triangle", 0.06);
+      break;
+    case "shoot":
+      playTone(760, 0.04, 0, "square", 0.045);
+      playTone(540, 0.05, 0.035, "square", 0.035);
+      break;
+    case "bugDestroy":
+      playTone(220, 0.06, 0, "sawtooth", 0.06);
+      playTone(880, 0.09, 0.04, "triangle", 0.055);
       break;
     case "collect":
       playTone(880, 0.06, 0, "sine", 0.08);

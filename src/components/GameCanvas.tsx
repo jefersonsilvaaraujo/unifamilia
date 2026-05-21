@@ -26,6 +26,12 @@ type FloatingMessage = {
   ttl: number;
 };
 
+type Projectile = Rect & {
+  id: number;
+  direction: 1 | -1;
+  speed: number;
+};
+
 type RuntimeHazard = Hazard & {
   active: boolean;
 };
@@ -48,6 +54,7 @@ type GameSnapshot = {
   bits: Bit[];
   bugs: Bug[];
   hazards: RuntimeHazard[];
+  projectiles: Projectile[];
   score: number;
   lives: number;
   timeLeft: number;
@@ -59,6 +66,8 @@ type GameSnapshot = {
   collectedBits: number;
   requiredBits: number;
   combo: number;
+  ammo: number;
+  facingDirection: 1 | -1;
   modeName: string;
   dailySeed?: string;
 };
@@ -71,6 +80,12 @@ const GRAVITY = 1900;
 const MAX_FALL_SPEED = 900;
 const SPAWN_X = 68;
 const DAMAGE_SCORE_PENALTY = 15;
+const MAX_AMMO = 10;
+const PROJECTILE_WIDTH = 18;
+const PROJECTILE_HEIGHT = 6;
+const PROJECTILE_SPEED = 720;
+const SHOT_COOLDOWN = 0.22;
+const BUG_DESTROY_BASE_SCORE = 20;
 
 function createPlayer(): Player {
   return {
@@ -272,6 +287,7 @@ function createSnapshot(
       ...hazard,
       active: hazard.type !== "laser" || isCycleActive(hazard.cycle, elapsed),
     })),
+    projectiles: [],
     score: 0,
     lives: mode.startingLives,
     timeLeft: mode.startTime,
@@ -283,6 +299,8 @@ function createSnapshot(
     collectedBits: 0,
     requiredBits,
     combo: 0,
+    ammo: MAX_AMMO,
+    facingDirection: 1,
     modeName: mode.name,
     dailySeed: mode.dailyVariant ? getDailySeedLabel(dailySeed) : undefined,
   };
@@ -299,21 +317,26 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
   const bitsRef = useRef<Bit[]>(initialRuntimeState.bits);
   const bugsRef = useRef<Bug[]>(initialRuntimeState.bugs);
   const hazardsRef = useRef<Hazard[]>(initialRuntimeState.hazards);
+  const projectilesRef = useRef<Projectile[]>([]);
   const keysRef = useRef(new Set<string>());
   const animationRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
   const scoreRef = useRef(0);
   const livesRef = useRef(mode.startingLives);
+  const ammoRef = useRef(MAX_AMMO);
   const timeLeftRef = useRef(mode.startTime);
   const endedRef = useRef(false);
   const jumpRequestedRef = useRef(false);
+  const shootRequestedRef = useRef(false);
   const damageCooldownRef = useRef(0);
+  const shotCooldownRef = useRef(0);
   const messageTtlRef = useRef(2);
   const messageRef = useRef(activeLevels[0].hint);
   const floatingMessagesRef = useRef<FloatingMessage[]>([]);
   const lastActionRef = useRef(0);
   const lastStepSoundRef = useRef(0);
   const viewportWidthRef = useRef(960);
+  const facingDirectionRef = useRef<1 | -1>(1);
   const elapsedRef = useRef(0);
   const comboRef = useRef(0);
   const phaseDamageRef = useRef(0);
@@ -348,6 +371,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
     player.velocityX = 0;
     player.velocityY = 0;
     player.onGround = false;
+    facingDirectionRef.current = 1;
     damageCooldownRef.current = invulnerableSeconds;
   }, []);
 
@@ -361,6 +385,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
       bitsRef.current = runtimeState.bits;
       bugsRef.current = runtimeState.bugs;
       hazardsRef.current = runtimeState.hazards;
+      projectilesRef.current = [];
       phaseDamageRef.current = 0;
       resetPlayerToStart(0.8);
     },
@@ -427,7 +452,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const allowedKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "Space", "KeyA", "KeyD", "KeyW"];
+      const allowedKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "Space", "KeyA", "KeyD", "KeyW", "KeyF", "KeyJ"];
 
       if (allowedKeys.includes(event.code)) {
         event.preventDefault();
@@ -437,6 +462,10 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
 
       if ((event.code === "ArrowUp" || event.code === "Space" || event.code === "KeyW") && !event.repeat) {
         jumpRequestedRef.current = true;
+      }
+
+      if ((event.code === "KeyF" || event.code === "KeyJ") && !event.repeat) {
+        shootRequestedRef.current = true;
       }
     };
 
@@ -512,6 +541,11 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
 
       portalDeniedCooldownRef.current = Math.max(0, portalDeniedCooldownRef.current - delta);
       zoneMessageCooldownRef.current = Math.max(0, zoneMessageCooldownRef.current - delta);
+      shotCooldownRef.current = Math.max(0, shotCooldownRef.current - delta);
+
+      if (direction === 1 || direction === -1) {
+        facingDirectionRef.current = direction;
+      }
 
       for (const bug of bugsRef.current) {
         if (!bug.movement) {
@@ -550,6 +584,35 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
         }
       }
 
+      const nextProjectiles: Projectile[] = [];
+
+      for (const projectile of projectilesRef.current) {
+        const movedProjectile = {
+          ...projectile,
+          x: projectile.x + projectile.speed * projectile.direction * delta,
+        };
+        const hitBugIndex = bugsRef.current.findIndex((bug) => isColliding(movedProjectile, bug));
+
+        if (hitBugIndex >= 0) {
+          const [destroyedBug] = bugsRef.current.splice(hitBugIndex, 1);
+          const destroyScore = scoreValue(BUG_DESTROY_BASE_SCORE + destroyedBug.level * 5, mode);
+          scoreRef.current += destroyScore;
+          showMessage(`Bug nivel ${destroyedBug.level} destruido!`, 1);
+          addFloatingMessage(destroyedBug.x, destroyedBug.y - 16, `+${destroyScore} bug`);
+          playSound("bugDestroy");
+          setTeachingAction("shoot");
+          continue;
+        }
+
+        if (movedProjectile.x + movedProjectile.width < 0 || movedProjectile.x > level.worldWidth) {
+          continue;
+        }
+
+        nextProjectiles.push(movedProjectile);
+      }
+
+      projectilesRef.current = nextProjectiles;
+
       const activeSlowZone = hazardsRef.current.find(
         (hazard) => hazard.type === "slow-zone" && isColliding(player, hazard),
       );
@@ -573,6 +636,34 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
           lastStepSoundRef.current = timestamp;
         }
       }
+
+      if (shootRequestedRef.current) {
+        if (ammoRef.current > 0 && shotCooldownRef.current === 0) {
+          const projectileDirection = facingDirectionRef.current;
+          ammoRef.current -= 1;
+          shotCooldownRef.current = SHOT_COOLDOWN;
+          projectilesRef.current.push({
+            id: Date.now() + Math.random(),
+            x:
+              projectileDirection === 1
+                ? player.x + player.width - 2
+                : player.x - PROJECTILE_WIDTH + 2,
+            y: player.y + Math.round(player.height * 0.46),
+            width: PROJECTILE_WIDTH,
+            height: PROJECTILE_HEIGHT,
+            direction: projectileDirection,
+            speed: PROJECTILE_SPEED,
+          });
+          showMessage(`Tiro disparado. Restam ${ammoRef.current}.`, 0.9);
+          playSound("shoot");
+          setTeachingAction("shoot");
+        } else if (ammoRef.current <= 0) {
+          showMessage("Sem tiros restantes.", 0.9);
+          setTeachingAction("shoot");
+        }
+      }
+
+      shootRequestedRef.current = false;
 
       if (jumpRequestedRef.current && player.onGround) {
         player.velocityY = -JUMP_FORCE;
@@ -730,6 +821,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
           ...hazard,
           active: hazard.type !== "laser" || isCycleActive(hazard.cycle, elapsedRef.current),
         })),
+        projectiles: projectilesRef.current.map((projectile) => ({ ...projectile })),
         score: scoreRef.current,
         lives: livesRef.current,
         timeLeft: timeLeftRef.current,
@@ -741,6 +833,8 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
         collectedBits,
         requiredBits,
         combo: comboRef.current,
+        ammo: ammoRef.current,
+        facingDirection: facingDirectionRef.current,
         modeName: mode.name,
         dailySeed: mode.dailyVariant ? getDailySeedLabel(dailySeedRef.current) : undefined,
       });
@@ -771,6 +865,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
           requiredBits={snapshot.requiredBits}
           totalBits={snapshot.bits.length}
           combo={snapshot.combo}
+          ammo={snapshot.ammo}
         />
         <button className="sound-toggle" type="button" onClick={toggleSound}>
           {snapshot.soundEnabled ? "Som ligado" : "Som desligado"}
@@ -852,6 +947,20 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
               ),
           )}
 
+          {snapshot.projectiles.map((projectile) => (
+            <div
+              className="projectile"
+              key={projectile.id}
+              style={{
+                left: projectile.x,
+                top: projectile.y,
+                width: projectile.width,
+                height: projectile.height,
+              }}
+              aria-label="Tiro"
+            />
+          ))}
+
           {snapshot.bugs.map((bug) => (
             <div
               className={`bug bug-level-${bug.level} ${bug.movement ? "is-moving" : ""}`}
@@ -886,7 +995,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
           ))}
 
           <div
-            className={snapshot.player.velocityX < 0 ? "player is-left" : "player"}
+            className={snapshot.facingDirection < 0 ? "player is-left" : "player"}
             style={{
               left: snapshot.player.x,
               top: snapshot.player.y,

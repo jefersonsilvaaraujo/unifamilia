@@ -18,6 +18,7 @@ export function StartScreen({ selectedMode, onModeChange, onStart }: StartScreen
       <ul className="instructions" aria-label="Controles e regras">
         <li>Use as setas ou A/D para mover.</li>
         <li>Use espaço ou seta para cima para pular.</li>
+        <li>Use J ou F para atirar. Voce tem 10 tiros por partida.</li>
         <li>Colete os bits para ganhar pontos.</li>
         <li>Evite os bugs.</li>
         <li>Avance por 3 fases sem parar a partida.</li>

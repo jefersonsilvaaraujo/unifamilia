@@ -38,6 +38,7 @@ Depois, abra o endereco mostrado pelo Vite no navegador.
 
 - Setas direcionais ou A/D: mover o personagem
 - Espaco, seta para cima ou W: pular
+- J ou F: atirar para destruir bugs proximos de bits
 - Botao Som ligado/desligado: ativa ou silencia os efeitos
 - Iniciar jogo: comeca a fase
 - Jogar novamente ou Tentar novamente: reinicia a partida
@@ -50,6 +51,8 @@ Depois, abra o endereco mostrado pelo Vite no navegador.
 - 1 Vida: modo extremo para adultos, com uma vida, 5 fases, todos os bits obrigatorios e maior multiplicador de pontos.
 
 Nos modos adultos, o ranking e separado por dificuldade. A pontuacao considera combo de bits, bonus de tempo, fases sem dano e coleta completa.
+
+O jogador tambem tem 10 tiros por partida. Cada tiro viaja na direcao do robo e pode destruir um bug, entao a municao deve ser usada para abrir caminho quando um bit estiver muito protegido.
 
 ## Fases e desafios
 
@@ -77,6 +80,7 @@ O painel **"Como o jogo funciona por dentro?"** exibe blocos curtos de codigo co
 
 - Movimento do personagem
 - Pulo
+- Tiro estrategico
 - Coleta de bits
 - Colisao com obstaculo
 - Condicao de vitoria

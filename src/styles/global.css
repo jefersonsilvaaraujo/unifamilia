@@ -507,6 +507,16 @@ h3 {
   transform: none;
 }
 
+.projectile {
+  position: absolute;
+  z-index: 5;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffffff, var(--lime));
+  box-shadow:
+    0 0 10px rgba(157, 255, 100, 0.78),
+    0 0 18px rgba(64, 215, 255, 0.35);
+}
+
 .bug {
   position: absolute;
   display: grid;
