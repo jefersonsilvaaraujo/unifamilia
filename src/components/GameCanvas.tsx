@@ -3,6 +3,7 @@ import type { GameOutcome } from "../App";
 import type { CodeSnippetId } from "../data/codeSnippets";
 import type { GameMode } from "../data/gameModes";
 import { GROUND_Y, levels, type Bit, type Bug, type Hazard, type Platform, type Rect } from "../data/levels";
+import { emptyGamepadInput, readGamepadInput, wasPressed, type GamepadInput } from "../utils/gamepad";
 import { getSoundEnabled, playSound, resumeAudio, setSoundEnabled } from "../utils/sound";
 import { ScoreBoard } from "./ScoreBoard";
 
@@ -319,6 +320,7 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
   const hazardsRef = useRef<Hazard[]>(initialRuntimeState.hazards);
   const projectilesRef = useRef<Projectile[]>([]);
   const keysRef = useRef(new Set<string>());
+  const previousGamepadInputRef = useRef<GamepadInput>(emptyGamepadInput);
   const animationRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
   const scoreRef = useRef(0);
@@ -533,11 +535,25 @@ export function GameCanvas({ mode, onAction, onGameEnd }: GameCanvasProps) {
 
       let level = activeLevels[phaseIndexRef.current];
       const keys = keysRef.current;
+      const gamepadInput = readGamepadInput();
+      const previousGamepadInput = previousGamepadInputRef.current;
       const player = playerRef.current;
       const movingLeft = keys.has("ArrowLeft") || keys.has("KeyA");
       const movingRight = keys.has("ArrowRight") || keys.has("KeyD");
-      const direction = Number(movingRight) - Number(movingLeft);
+      const gamepadMovingLeft = gamepadInput.moveX < 0;
+      const gamepadMovingRight = gamepadInput.moveX > 0;
+      const direction = Number(movingRight || gamepadMovingRight) - Number(movingLeft || gamepadMovingLeft);
       const previousBottom = player.y + player.height;
+
+      if (wasPressed(gamepadInput.jump, previousGamepadInput.jump)) {
+        jumpRequestedRef.current = true;
+      }
+
+      if (wasPressed(gamepadInput.shoot, previousGamepadInput.shoot)) {
+        shootRequestedRef.current = true;
+      }
+
+      previousGamepadInputRef.current = gamepadInput;
 
       portalDeniedCooldownRef.current = Math.max(0, portalDeniedCooldownRef.current - delta);
       zoneMessageCooldownRef.current = Math.max(0, zoneMessageCooldownRef.current - delta);

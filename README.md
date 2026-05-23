@@ -39,6 +39,8 @@ Depois, abra o endereço mostrado pelo Vite no navegador.
 - Setas direcionais ou A/D: mover o personagem
 - Espaço, seta para cima ou W: pular
 - J ou F: atirar para destruir bugs próximos de bits
+- Controle Xbox: analógico esquerdo ou D-pad para mover, A para pular, X ou RT para atirar
+- Menu com controle: D-pad/LB/RB para trocar dificuldade, A para iniciar/reiniciar e B para voltar ao menu na derrota
 - Botão Som ligado/desligado: ativa ou silencia os efeitos
 - Iniciar jogo: começa a fase
 - Jogar novamente ou Tentar novamente: reinicia a partida

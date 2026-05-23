@@ -117,7 +117,7 @@ export const levels: LevelConfig[] = [
     hint: "Colete os bits e teste os primeiros pulos.",
     worldWidth: 1700,
     portalX: 1585,
-    timeBonus: 12,
+    timeBonus: 24,
     platforms: [
       { x: 0, y: GROUND_Y, width: 1700, height: 50 },
       { x: 300, y: 405, width: 180, height: 20 },
@@ -147,7 +147,7 @@ export const levels: LevelConfig[] = [
     hint: "Alguns bugs patrulham a fase. Observe o ritmo antes de pular.",
     worldWidth: 1900,
     portalX: 1785,
-    timeBonus: 14,
+    timeBonus: 28,
     platforms: [
       { x: 0, y: GROUND_Y, width: 1900, height: 50 },
       { x: 260, y: 405, width: 160, height: 20 },
@@ -339,7 +339,7 @@ export const levels: LevelConfig[] = [
     hint: "Rotas de risco valem mais pontos, mas firewalls alternam o caminho.",
     worldWidth: 2300,
     portalX: 2185,
-    timeBonus: 8,
+    timeBonus: 16,
     platforms: [
       { x: 0, y: GROUND_Y, width: 2300, height: 50 },
       { x: 245, y: 402, width: 135, height: 20 },

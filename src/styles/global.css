@@ -172,6 +172,14 @@ h3 {
   line-height: 1.45;
 }
 
+.controller-status {
+  margin: 8px 0 0;
+  color: var(--cyan);
+  font-size: 0.84rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
 .mode-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
